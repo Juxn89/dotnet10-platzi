@@ -1,0 +1,10 @@
+root = true
+
+[*]
+chartset = utf-8
+ident-size = 2
+tab_width = 2
+indent_style = tab
+
+[*.yml]
+indent_style = space
