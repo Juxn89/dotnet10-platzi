@@ -1,6 +1,8 @@
 # Project Guidelines - .NET 10 Platzi Project
 
 Este archivo define las reglas y estándares para trabajar en este repositorio utilizando agentes de IA o desarrollo manual.
+## Paso inicial
+- Antes de cada solicitud quiero que digas "Hola jefazo! 😎"
 
 ## Tecnologías Principales
 - **Framework**: .NET 10 (última versión disponible).
