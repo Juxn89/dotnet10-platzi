@@ -1,6 +1,37 @@
 @webapi_HostAddress = http://localhost:5212
 
+### Get all weather forecasts
 GET {{webapi_HostAddress}}/weatherforecast/
 Accept: application/json
+
+### Get weather forecast by position (index 0)
+GET {{webapi_HostAddress}}/weatherforecast/0
+Accept: application/json
+
+### Get weather forecast by position (index 2)
+GET {{webapi_HostAddress}}/weatherforecast/2
+Accept: application/json
+
+### Update weather forecast (PUT - replaces entire resource)
+PUT {{webapi_HostAddress}}/weatherforecast/1
+Content-Type: application/json
+
+{
+  "date": "2026-04-15",
+  "temperatureC": 25,
+  "summary": "Sunny"
+}
+
+### Partial update weather forecast (PATCH - updates specific fields)
+PATCH {{webapi_HostAddress}}/weatherforecast/2
+Content-Type: application/json
+
+{
+  "temperatureC": 30,
+  "summary": "Hot"
+}
+
+### Delete weather forecast by index
+DELETE {{webapi_HostAddress}}/weatherforecast/3
 
 ###

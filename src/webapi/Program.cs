@@ -1,15 +1,12 @@
 using System.Reflection;
-
 using Microsoft.OpenApi;
-
 using Scalar.AspNetCore;
-
 using webapi.middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddLogging();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

@@ -12,9 +12,12 @@ public class WeatherForecastController : ControllerBase
   ];
 
   private WeatherForecast[] WeatherForecasts;
+  private ILogger<WeatherForecastController> _logger;
 
-  public WeatherForecastController()
+  public WeatherForecastController(ILogger<WeatherForecastController> logger)
   {
+    _logger = logger;
+
     WeatherForecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
     {
       Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -31,18 +34,21 @@ public class WeatherForecastController : ControllerBase
   [HttpGet(Name = "GetWeatherForecast")]
   public IEnumerable<WeatherForecast> Get()
   {
+    _logger.LogInformation("Getting all weather forecasts");
     return WeatherForecasts;
   }
 
   /// <summary>
   /// Return weatherforescast by position
   /// </summary>
+  /// <param name="logger"></param>
   /// <param name="id">Weatherforecast index position</param>
   /// <returns>Weatherforecast</returns>
   [HttpGet]
   [Route("{id}")]
-  public ActionResult<WeatherForecast> GetWeatherForecastByPosition(int id)
+  public ActionResult<WeatherForecast> GetWeatherForecastByPosition([FromServices] ILogger<WeatherForecastController> logger, int id)
   {
+    logger.LogInformation("Getting weather forecast by position: {id}", id);
     if (id < 0 || id >= WeatherForecasts.Length)
     {
       return NotFound();
