@@ -4,6 +4,8 @@ using Microsoft.OpenApi;
 
 using Scalar.AspNetCore;
 
+using webapi.middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -51,11 +53,14 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-app.UseCors();
+app.UseCors(MyAllowOrigins);
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// Custom middleware can be added here
+app.UseRequesLoggingMiddleware();
 
 app.MapControllers();
 
