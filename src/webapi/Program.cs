@@ -36,8 +36,11 @@ builder.Services.AddSwaggerGen(options => {
     Description = "Basic Authentication header. Use the format username/password"
   });
 
-  options.AddSecurityRequirement(document => new OpenApiSecurityRequirement() {
-    [new OpenApiSecuritySchemeReference("BasicAuth", document)] = []
+  options.AddSecurityRequirement(document => new OpenApiSecurityRequirement {
+    { 
+      new OpenApiSecuritySchemeReference("basic", document),
+      new List<string>()
+    }
   });
 });
 
@@ -59,7 +62,10 @@ if (app.Environment.IsDevelopment())
   app.MapOpenApi();
   app.MapScalarApiReference();
   app.UseSwagger();
-  app.UseSwaggerUI();
+  app.UseSwaggerUI(c =>
+  {
+    c.ConfigObject.AdditionalItems["persistAuthorization"] = true;
+  });
 }
 
 app.UseCors(MyAllowOrigins);

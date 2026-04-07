@@ -3,16 +3,22 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace webapi.middlewares;
 // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
 public class BasicAuthMiddleware
 {
   private readonly RequestDelegate _next;
-  private readonly string _user = "user";
-  private readonly string _password = "password";
+  private readonly string _user;
+  private readonly string _password;
 
-  public BasicAuthMiddleware(RequestDelegate next) => _next = next;
+  public BasicAuthMiddleware(RequestDelegate next, IConfiguration configuration)
+  {
+    _next = next;
+    _user = configuration["BasicAuth:Username"] ?? string.Empty;
+    _password = configuration["BasicAuth:Password"] ?? string.Empty;
+  }
 
   public async Task Invoke(HttpContext context)
   {
