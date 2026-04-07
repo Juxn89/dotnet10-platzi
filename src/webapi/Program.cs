@@ -27,6 +27,18 @@ builder.Services.AddSwaggerGen(options => {
   var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
   var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
   options.IncludeXmlComments(xmlPath);
+
+  options.AddSecurityDefinition("BasicAuth", new OpenApiSecurityScheme
+  {
+    Type = SecuritySchemeType.Http,
+    Scheme = "basic",
+    In = ParameterLocation.Header,
+    Description = "Basic Authentication header. Use the format username/password"
+  });
+
+  options.AddSecurityRequirement(document => new OpenApiSecurityRequirement() {
+    [new OpenApiSecuritySchemeReference("BasicAuth", document)] = []
+  });
 });
 
 var MyAllowOrigins = "MyAllowOrigins";
@@ -54,9 +66,10 @@ app.UseCors(MyAllowOrigins);
 
 app.UseHttpsRedirection();
 
+app.UseBasicAuthMiddleware();
+
 app.UseAuthorization();
 
-// Custom middleware can be added here
 app.UseRequesLoggingMiddleware();
 
 app.MapControllers();
