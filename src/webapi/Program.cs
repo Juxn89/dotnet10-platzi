@@ -6,6 +6,7 @@ using Scalar.AspNetCore;
 
 using webapi.data;
 using webapi.middlewares;
+using webapi.services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,9 @@ builder.Services.AddCors(options =>
     // config.WithOrigins("http://localhost:5173");
   });
 });
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaskService, TaskItemService>();
 
 var app = builder.Build();
 
