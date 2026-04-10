@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using webapi.models;
 using webapi.services;
@@ -10,6 +11,7 @@ namespace webapi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
+[Authorize]
 public class UserController : ControllerBase
 {
   private readonly IUserService _userService;

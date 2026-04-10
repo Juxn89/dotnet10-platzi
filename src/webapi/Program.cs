@@ -1,7 +1,13 @@
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Text;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+
 using Scalar.AspNetCore;
 
 using webapi.data;
@@ -14,12 +20,36 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppDbContext>(options => { 
-  options.UseInMemoryDatabase("WeatherForecastDb");
+builder.Services.AddDbContext<AppDbContext>(options => {
+  var connectionString = builder.Configuration.GetConnectionString("SQL_DB");
+  options.UseSqlServer(connectionString);
 });
+
+//builder.Services.AddDbContext<AppDbContext>(options => { 
+//  options.UseInMemoryDatabase("WeatherForecastDb");
+//});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddAuthentication(options => {
+  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+  .AddJwtBearer(options => {
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+      ValidateIssuer = true,
+      ValidateAudience = true,
+      ValidateLifetime = true,
+      ValidateIssuerSigningKey = true,
+      ValidIssuer = builder.Configuration["Jwt:Issuer"],
+      ValidAudience = builder.Configuration["Jwt:Audience"],
+      IssuerSigningKey = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+      )
+    };
+  });
 
 builder.Services.AddSwaggerGen(options => {
   options.SwaggerDoc("v1", new OpenApiInfo
@@ -38,19 +68,21 @@ builder.Services.AddSwaggerGen(options => {
   var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
   options.IncludeXmlComments(xmlPath);
 
-  options.AddSecurityDefinition("BasicAuth", new OpenApiSecurityScheme
+  options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
   {
+    Name = "Authorization",
     Type = SecuritySchemeType.Http,
-    Scheme = "basic",
+    Scheme = "bearer",
+    BearerFormat = "JWT",
     In = ParameterLocation.Header,
-    Description = "Basic Authentication header. Use the format username/password"
+    //Description = "Enter 'Bearer' [space] and then your valid token.",
+    Description = "Enter your valid token."
   });
 
-  options.AddSecurityRequirement(document => new OpenApiSecurityRequirement {
-    { 
-      new OpenApiSecuritySchemeReference("basic", document),
-      new List<string>()
-    }
+  
+  options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+  {
+    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
   });
 });
 
@@ -85,8 +117,7 @@ app.UseCors(MyAllowOrigins);
 
 app.UseHttpsRedirection();
 
-app.UseBasicAuthMiddleware();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequesLoggingMiddleware();

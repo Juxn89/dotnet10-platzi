@@ -8,7 +8,7 @@ services:
       - MSSQL_SA_PASSWORD=${SQL_SERVER_PASSWORD}
       - MSSQL_PID=Developer
     ports:
-      - "1434:1433"
+      - "1434:1433"  # Cambiado de 1433:1433 a 1434:1433
     volumes:
       - sqlserver_data:/var/opt/mssql
     networks:

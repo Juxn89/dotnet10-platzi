@@ -39,7 +39,6 @@ public class TaskItemService : ITaskService
     }
 
     existingTask.Title = taskItem.Title;
-    existingTask.Description = taskItem.Description;
     existingTask.IsCompleted = taskItem.IsCompleted;
     existingTask.UserId = taskItem.UserId;
 
